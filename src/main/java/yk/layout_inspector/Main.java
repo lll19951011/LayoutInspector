@@ -8,18 +8,17 @@ import com.android.layoutinspector.LayoutInspectorCaptureOptions;
 import com.android.layoutinspector.LayoutInspectorResult;
 import com.android.layoutinspector.ProtocolVersion;
 import com.android.layoutinspector.model.ClientWindow;
-import com.android.sdklib.AndroidVersion;
 
+import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static final String ADB_PATH =
-            "/home/wudi/bin/android-sdk/platform-tools/adb";
+    private static final String ADB_PATH = "C:\\Users\\luoshuangxi\\AppData\\Local\\Android\\Sdk\\platform-tools\\adb.exe";
+    private static final String APP_NAME = "org.mokee.lawnchair";
+
     private static final boolean LAYOUT_INSPECTOR_V2_PROTOCOL_ENABLED = false;
 
     public static void exitWithError() {
@@ -45,15 +44,15 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        System.out.println("命令参数为adb全路径 程序名，比如: /bin/adb com.android.systemui");
-        if (args == null || args.length < 2) {
-            System.out.println("必须输入adb路径和程序名");
-            exitWithError();
+        File captures = new File("captures");
+        if (!captures.exists() || !captures.isDirectory()) {
+            System.out.println("mkdir captures ...");
+            captures.mkdir();
         }
-        IDevice device = getDevice(args[0]);
+
+        IDevice device = getDevice(ADB_PATH);
         System.out.println(device.getName());
-        String appName = args[1];
-        Client client = device.getClient(appName);
+        Client client = device.getClient(APP_NAME);
         if (client == null) {
             System.out.println("程序名错误");
             exitWithError();
@@ -87,7 +86,7 @@ public class Main {
             LayoutInspectorResult result = LayoutInspectorBridge.captureView(window, options);
             byte[] bytes = result.getData();
             if (bytes != null) {
-                IOUtil.saveBytes(appName+"_"+System.currentTimeMillis()+".li", bytes);
+                IOUtil.saveBytes("captures/" + APP_NAME + "_" + System.currentTimeMillis() + ".li", bytes);
                 System.out.println("save ok");
                 System.exit(0);
             } else {

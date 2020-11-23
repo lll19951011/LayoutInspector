@@ -32,7 +32,7 @@ object LayoutInspectorBridge {
         window: ClientWindow, options: LayoutInspectorCaptureOptions
     ): LayoutInspectorResult {
         val hierarchy =
-            window.loadWindowData(options, 60, TimeUnit.SECONDS) ?: return LayoutInspectorResult(
+            window.loadWindowData(options, 120, TimeUnit.SECONDS) ?: return LayoutInspectorResult(
                 null,
                 "There was a timeout error capturing the layout data from the device.\n" +
                 "The device may be too slow, the captured view may be too complex, or the view may contain animations.\n\n" +
